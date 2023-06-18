@@ -1,6 +1,6 @@
 <template>
   <div>
-    <form action="/" method="POST" name="simple-contact-form" netlify>
+    <form name="simple-contact-form" netlify @submit="handleSubmit">
       <input type="hidden" name="form-name" value="simple-contact-form" />
       <div class="form-row">
         <label for="name" class="form-row__label">Name</label>
@@ -26,7 +26,26 @@
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const handleSubmit = (event: SubmitEvent) => {
+  event.preventDefault();
+
+  const myForm = event.target;
+
+  // typeguard
+  if (!(myForm instanceof HTMLFormElement)) throw new Error("[IOB] The myForm is not a form element !!!");
+
+  const formData = new FormData(myForm);
+
+  fetch("/", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams(formData).toString(),
+  })
+    .then(() => console.log("form submitted"))
+    .catch((error) => alert(error));
+};
+</script>
 
 <style>
 .form-row {
